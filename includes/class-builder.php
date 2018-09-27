@@ -128,8 +128,14 @@ class FacetWP_Builder
         }
 
         if ( 0 === strpos( $source, 'post_' ) || 'ID' == $source ) {
-            if ( 'post_title' == $source && 'none' !== $settings['link']['type'] ) {
+            if ( 'post_title' == $source ) {
                 $value = $this->linkify( $post->$source, $settings['link'] );
+            }
+            elseif ( 'post_excerpt' == $source ) {
+                $value = get_the_excerpt( $post->ID );
+            }
+            elseif ( 'post_content' == $source ) {
+                $value = apply_filters( 'the_content', $post->post_content );
             }
             elseif ( 'post_author' == $source ) {
                 $field = $settings['author_field'];
@@ -158,10 +164,12 @@ class FacetWP_Builder
 
             if ( is_array( $terms ) ) {
                 foreach ( $terms as $term_obj ) {
-                    $temp[] = $this->linkify( $term_obj->name, $settings['term_link'], array(
+                    $term = $this->linkify( $term_obj->name, $settings['term_link'], array(
                             'term_id' => $term_obj->term_id,
                             'taxonomy' => $taxonomy
                     ) );
+
+                    $temp[] = '<span class="fwpl-term fwpl-term-' . $term_obj->slug . ' fwpl-tax-' . $taxonomy . '">' . $term . '</span>';
                 }
             }
 
@@ -226,6 +234,11 @@ class FacetWP_Builder
 
         // Allow value hooks
         $value = apply_filters( 'facetwp_builder_item_value', $value, $item );
+
+        // Convert array to string
+        if ( is_array( $value ) ) {
+            $value = implode( ', ', $value );
+        }
 
         // Store the RAW short-tag
         $this->data[ "$name:raw" ] = $value;
@@ -383,6 +396,14 @@ class FacetWP_Builder
             $output .= $this->custom_css . "\n";
         }
 
+        $output .= "
+@media (max-width: 480px) {
+    .fwpl-layout {
+        grid-template-columns: 1fr;
+    }
+}
+";
+
         $output .= "</style>\n";
 
         return $output;
@@ -430,6 +451,7 @@ class FacetWP_Builder
      * @since 3.2.0
      */
     function parse_query_obj( $query_obj ) {
+        $output = array();
         $tax_query = array();
         $meta_query = array();
         $date_query = array();
@@ -455,6 +477,9 @@ class FacetWP_Builder
             $compare = $filter['compare'];
             $type = $filter['type'];
 
+            // Cast as decimal for more accuracy
+            $type = ( 'NUMERIC' == $type ) ? 'DECIMAL(16,4)' : $type;
+
             $in_clause = in_array( $compare, array( 'IN', 'NOT IN' ) );
             $exists_clause = in_array( $compare, array( 'EXISTS', 'NOT EXISTS' ) );
 
@@ -466,10 +491,7 @@ class FacetWP_Builder
                 $value = $exists_clause ? '' : $value[0];
             }
 
-            if ( 'post_status' == $key ) {
-                $post_status = $value;
-            }
-            elseif ( 'ID' == $key ) {
+            if ( 'ID' == $key ) {
                 if ( 'IN' == $compare ) {
                     $post_in = $value;
                 }
@@ -485,31 +507,8 @@ class FacetWP_Builder
                     $author_not_in = $value;
                 }
             }
-            elseif ( 'tax/' == substr( $key, 0, 4 ) ) {
-                $temp = array(
-                    'taxonomy' => substr( $key, 4 ),
-                    'field' => 'slug',
-                    'operator' => $compare
-                );
-
-                if ( ! $exists_clause ) {
-                    $temp['terms'] = $value;
-                }
-
-                $tax_query[] = $temp;
-            }
-            elseif ( 'cf/' == substr( $key, 0, 3 ) ) {
-                $temp = array(
-                    'key' => substr( $key, 3 ),
-                    'compare' => $compare,
-                    'type' => $type
-                );
-
-                if ( ! $exists_clause ) {
-                    $temp['value'] = $value;
-                }
-
-                $meta_query[] = $temp;
+            elseif ( 'post_status' == $key ) {
+                $post_status = $value;
             }
             elseif ( 'post_date' == $key || 'post_modified' == $key ) {
                 if ( '>' == $compare || '>=' == $compare ) {
@@ -525,13 +524,44 @@ class FacetWP_Builder
                     );
                 }
             }
+            elseif ( 0 === strpos( $key, 'tax/' ) ) {
+                $temp = array(
+                    'taxonomy' => substr( $key, 4 ),
+                    'field' => 'slug',
+                    'operator' => $compare
+                );
+
+                if ( ! $exists_clause ) {
+                    $temp['terms'] = $value;
+                }
+
+                $tax_query[] = $temp;
+            }
+            else {
+                $temp = array(
+                    'key' => substr( $key, strpos( $key, '/' ) + 1 ),
+                    'compare' => $compare,
+                    'type' => $type
+                );
+
+                if ( ! $exists_clause ) {
+                    $temp['value'] = $value;
+                }
+
+                $meta_query[] = $temp;
+            }
         }
 
         foreach ( $query_obj['orderby'] as $index => $data ) {
             if ( 'cf/' == substr( $data['key'], 0, 3 ) ) {
+                $type = $data['type'];
+
+                // Cast as decimal for more accuracy
+                $type = ( 'NUMERIC' == $type ) ? 'DECIMAL(16,4)' : $type;
+
                 $meta_query['sort_' . $index] = array(
                     'key' => substr( $data['key'], 3 ),
-                    'type' => $data['type']
+                    'type' => $type
                 );
 
                 $orderby['sort_' . $index] = $data['order'];
@@ -541,19 +571,25 @@ class FacetWP_Builder
             }
         }
 
-        $output = array(
-            'tax_query' => $tax_query,
+        $temp = array(
+            'post_type' => $post_type,
+            'post_status' => $post_status,
             'meta_query' => $meta_query,
+            'tax_query' => $tax_query,
             'date_query' => $date_query,
-            'author__in' => $author_in,
-            'author__not_in' => $author_not_in,
             'post__in' => $post_in,
             'post__not_in' => $post_not_in,
-            'posts_per_page' => $query_obj['posts_per_page'],
-            'post_status' => $post_status,
-            'post_type' => $post_type,
-            'orderby' => $orderby
+            'author__in' => $author_in,
+            'author__not_in' => $author_not_in,
+            'orderby' => $orderby,
+            'posts_per_page' => $query_obj['posts_per_page']
         );
+
+        foreach ( $temp as $key => $val ) {
+            if ( ! empty( $val ) ) {
+                $output[ $key ] = $val;
+            }
+        }
 
         return $output;
     }
@@ -614,8 +650,8 @@ class FacetWP_Builder
         $data_sources['posts']['choices'] = array(
             'ID' => 'ID',
             'post_author' => 'Post Author',
-            'post_date' => 'Post Date',
             'post_status' => 'Post Status',
+            'post_date' => 'Post Date',
             'post_modified' => 'Post Modified'
         );
 

@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: FacetWP\n"
-"POT-Creation-Date: 2018-06-12 13:45-0400\n"
-"PO-Revision-Date: 2018-06-12 13:45-0400\n"
+"POT-Creation-Date: 2018-08-08 09:59-0400\n"
+"PO-Revision-Date: 2018-08-20 10:27-0400\n"
 "Last-Translator: Matt Gibbs <hello@facetwp.com>\n"
 "Language-Team: Matt Gibbs <hello@facetwp.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.8\n"
+"X-Generator: Poedit 2.1.1\n"
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -275,68 +275,68 @@ msgstr "Entrer les mots-clés"
 msgid "Enter values"
 msgstr "Entrer les mots-clés"
 
-#: assets/js/dist/admin.min.js:616 assets/js/src/admin.js:846
+#: assets/js/dist/admin.min.js:616 assets/js/src/admin.js:847
 #: includes/class-settings-admin.php:279
 msgid "Layout"
 msgstr ""
 
-#: assets/js/dist/admin.min.js:647 assets/js/src/admin.js:875
+#: assets/js/dist/admin.min.js:647 assets/js/src/admin.js:876
 #: includes/class-settings-admin.php:283
 msgid "Row"
 msgstr ""
 
-#: assets/js/dist/admin.min.js:656 assets/js/src/admin.js:882
+#: assets/js/dist/admin.min.js:656 assets/js/src/admin.js:883
 #: includes/class-settings-admin.php:284
 msgid "Column"
 msgstr ""
 
-#: assets/js/dist/admin.min.js:1192 assets/js/src/admin.js:1617
+#: assets/js/dist/admin.min.js:1172 assets/js/src/admin.js:1600
 #: includes/class-settings-admin.php:298
 msgid "Saving"
 msgstr "Enregistrement en cours"
 
-#: assets/js/dist/admin.min.js:1233 assets/js/dist/admin.min.js:1278
-#: assets/js/src/admin.js:1653 assets/js/src/admin.js:1694
+#: assets/js/dist/admin.min.js:1213 assets/js/dist/admin.min.js:1258
+#: assets/js/src/admin.js:1636 assets/js/src/admin.js:1677
 #: includes/class-settings-admin.php:299
 msgid "Indexing"
 msgstr "L’indexage"
 
-#: assets/js/dist/admin.min.js:1274 assets/js/src/admin.js:1690
+#: assets/js/dist/admin.min.js:1254 assets/js/src/admin.js:1673
 #: includes/class-settings-admin.php:300
 msgid "Indexing complete"
 msgstr "Indexation complète"
 
-#: assets/js/dist/admin.min.js:1336 assets/js/src/admin.js:1746
+#: assets/js/dist/admin.min.js:1316 assets/js/src/admin.js:1729
 #: includes/class-settings-admin.php:303
 msgid "Copied!"
 msgstr ""
 
-#: assets/js/dist/admin.min.js:1339 assets/js/src/admin.js:1749
+#: assets/js/dist/admin.min.js:1319 assets/js/src/admin.js:1732
 #: includes/class-settings-admin.php:304
 msgid "Press CTRL+C to copy"
 msgstr ""
 
-#: assets/js/dist/admin.min.js:1347 assets/js/src/admin.js:1757
+#: assets/js/dist/admin.min.js:1327 assets/js/src/admin.js:1740
 #: includes/class-settings-admin.php:305
 msgid "Activating"
 msgstr "Activation de"
 
-#: assets/js/dist/admin.min.js:1404 assets/js/src/admin.js:1806
+#: assets/js/dist/admin.min.js:1384 assets/js/src/admin.js:1789
 #: includes/class-settings-admin.php:307
 msgid "Stop indexer"
 msgstr ""
 
-#: assets/js/dist/admin.min.js:1404 assets/js/src/admin.js:1806
+#: assets/js/dist/admin.min.js:1384 assets/js/src/admin.js:1789
 #: includes/class-settings-admin.php:306
 msgid "Re-index"
 msgstr "Réindexez"
 
-#: assets/js/dist/admin.min.js:1420 assets/js/src/admin.js:1822
+#: assets/js/dist/admin.min.js:1400 assets/js/src/admin.js:1805
 #: includes/class-settings-admin.php:308
 msgid "Loading"
 msgstr "Chargement"
 
-#: assets/js/dist/admin.min.js:1435 assets/js/src/admin.js:1837
+#: assets/js/dist/admin.min.js:1415 assets/js/src/admin.js:1820
 #: includes/class-settings-admin.php:309
 msgid "Importing"
 msgstr "Importer"
@@ -412,7 +412,7 @@ msgstr "Taxonomies"
 msgid "Custom Fields"
 msgstr "Champs personnalisés"
 
-#: includes/class-init.php:138 templates/page-settings.php:91
+#: includes/class-init.php:138 templates/page-settings.php:92
 msgid "Settings"
 msgstr "Paramètres"
 
@@ -730,7 +730,7 @@ msgstr "Aucun resultat"
 
 #: includes/facets/autocomplete.php:157 includes/facets/search.php:75
 msgid "Placeholder text"
-msgstr "Emplacement du texte"
+msgstr "Texte de remplacement"
 
 #: includes/facets/checkboxes.php:7
 msgid "Checkboxes"
@@ -1136,7 +1136,7 @@ msgid "Stock Status"
 msgstr "Etat du stock"
 
 #: includes/integrations/woocommerce/woocommerce.php:55
-#: includes/integrations/woocommerce/woocommerce.php:417
+#: includes/integrations/woocommerce/woocommerce.php:411
 msgid "On Sale"
 msgstr "En Promotion"
 
@@ -1146,11 +1146,11 @@ msgstr "En Promotion"
 msgid "Product Type"
 msgstr "Type de produit"
 
-#: includes/integrations/woocommerce/woocommerce.php:409
+#: includes/integrations/woocommerce/woocommerce.php:403
 msgid "In Stock"
 msgstr "En stock"
 
-#: includes/integrations/woocommerce/woocommerce.php:409
+#: includes/integrations/woocommerce/woocommerce.php:403
 msgid "Out of Stock"
 msgstr "Epuisé"
 
@@ -1163,55 +1163,55 @@ msgstr ""
 "FacetWP nécessite PHP %s ou supérieur. S’il vous plaît contacter votre hôte "
 "et demander un surclassement PHP."
 
-#: templates/page-settings.php:24
+#: templates/page-settings.php:25
 msgid "This facet type has no additional settings."
 msgstr "Ce type de facette n’a aucun paramètre supplémentaire."
 
-#: templates/page-settings.php:90
+#: templates/page-settings.php:91
 #, fuzzy
 #| msgid "Basic"
 msgid "Basics"
 msgstr "Base"
 
-#: templates/page-settings.php:92
+#: templates/page-settings.php:93
 msgid "Support"
 msgstr "Staff"
 
-#: templates/page-settings.php:101
+#: templates/page-settings.php:102
 msgid "Show indexer stats"
 msgstr ""
 
-#: templates/page-settings.php:102
+#: templates/page-settings.php:103
 #, fuzzy
 #| msgid "All post types"
 msgid "Show indexable post types"
 msgstr "Tous les types de poste"
 
-#: templates/page-settings.php:103
+#: templates/page-settings.php:104
 msgid "Purge the index table"
 msgstr ""
 
-#: templates/page-settings.php:108
+#: templates/page-settings.php:109
 #, fuzzy
 #| msgid "Save Changes"
 msgid "Save changes"
 msgstr "Enregistrer les changements"
 
-#: templates/page-settings.php:126
+#: templates/page-settings.php:127
 msgid "Back"
 msgstr "Retour"
 
-#: templates/page-settings.php:133
+#: templates/page-settings.php:134
 msgid "Facets"
 msgstr "Facettes"
 
-#: templates/page-settings.php:134 templates/page-settings.php:141
+#: templates/page-settings.php:135 templates/page-settings.php:142
 #, fuzzy
 #| msgid "Add New"
 msgid "Add new"
 msgstr "Ajouter"
 
-#: templates/page-settings.php:140
+#: templates/page-settings.php:141
 msgid "Templates"
 msgstr "Templates"
 

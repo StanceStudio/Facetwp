@@ -1,5 +1,5 @@
 /*!
- * Font Awesome Free 5.0.13 by @fontawesome - https://fontawesome.com
+ * Font Awesome Free 5.2.0 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 (function () {
@@ -19,15 +19,9 @@ var WINDOW = _WINDOW;
 
 
 
-
-
 var IS_IE = ~userAgent.indexOf('MSIE') || ~userAgent.indexOf('Trident/');
 
 var NAMESPACE_IDENTIFIER = '___FONT_AWESOME___';
-
-
-
-
 
 
 

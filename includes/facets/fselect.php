@@ -194,10 +194,11 @@ class FacetWP_Facet_fSelect extends FacetWP_Facet
         $label_any = facetwp_i18n( $label_any );
 
         return array(
-            'placeholder'   => $label_any,
-            'overflowText'  => __( '{n} selected', 'fwp' ),
-            'searchText'    => __( 'Search', 'fwp' ),
-            'operator'      => $facet['operator']
+            'placeholder'       => $label_any,
+            'overflowText'      => __( '{n} selected', 'fwp' ),
+            'searchText'        => __( 'Search', 'fwp' ),
+            'noResultsText'     => __( 'No results found', 'fwp' ),
+            'operator'          => $facet['operator']
         );
     }
 

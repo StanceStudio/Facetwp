@@ -9,6 +9,9 @@ class FacetWP_Display
     /* (array) Facets being used on the page */
     public $active_facets = array();
 
+    /* (array) Saved shortcode attributes */
+    public $shortcode_atts = array();
+
     /* (boolean) Whether to enable FacetWP for the current page */
     public $load_assets = false;
 
@@ -42,6 +45,8 @@ class FacetWP_Display
      * Register shortcodes
      */
     function shortcode( $atts ) {
+        $this->shortcode_atts[] = $atts;
+
         $output = '';
         if ( isset( $atts['facet'] ) ) {
             $facet = FWP()->helper->get_facet_by_name( $atts['facet'] );
@@ -189,6 +194,8 @@ class FacetWP_Display
                 if ( false !== strpos( $url, 'facetwp' ) ) {
                     $url .= '?ver=' . FACETWP_VERSION;
                 }
+
+                $html = apply_filters( 'facetwp_asset_html', $html, $url );
 
                 echo str_replace( '{url}', $url, $html ) . "\n";
             }

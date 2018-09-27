@@ -2,7 +2,8 @@
 
 // Support tab HTML
 include( FACETWP_DIR . '/templates/page-support.php' );
-$support_html = FacetWP_Support::get_html();
+$support_html = new FacetWP_Support();
+$support_html = $support_html->get_html();
 
 // Settings
 $settings_admin = new FacetWP_Settings_Admin();

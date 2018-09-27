@@ -3,10 +3,10 @@
 class FacetWP_Renderer
 {
 
-    /* (array) Data for the currently-selected facets */
+    /* (array) Data for the current facets */
     public $facets;
 
-    /* (string) Template name */
+    /* (array) Data for the current template */
     public $template;
 
     /* (array) WP_Query arguments */

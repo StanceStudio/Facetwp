@@ -396,10 +396,18 @@
                 query_obj: {
                     type: Object,
                     required: true
+                },
+                template: {
+                    type: Object,
+                    required: true
                 }
             },
             template: `
             <div class="qb-wrap">
+                <div class="side-link">
+                    <a href="javascript:;" @click="$root.getQueryArgs(template)">{{ 'Convert to query args' | i18n }}</a>
+                </div>
+
                 <div>
                     {{ 'Fetch' | i18n }}
                     <multiselect
@@ -471,6 +479,7 @@
 
                     <select v-model="row.compare" class="qb-compare">
                         <option v-if="showCompare('=', row)" value="=">=</option>
+                        <option v-if="showCompare('!=', row)" value="!=">!=</option>
                         <option v-if="showCompare('>', row)" value=">">&gt;</option>
                         <option v-if="showCompare('>=', row)" value=">=">&gt;=</option>
                         <option v-if="showCompare('<', row)" value="<">&lt;</option>
@@ -1371,7 +1380,7 @@
 
                 <div v-show="tab == 'query'">
                     <div class="table-row" v-show="template.modes.query == 'visual'">
-                        <query-builder :query_obj="template.query_obj"></query-builder>
+                        <query-builder :query_obj="template.query_obj" :template="template"></query-builder>
                     </div>
                     <div class="table-row" v-show="template.modes.query == 'advanced'">
                         <div class="side-link">
@@ -1704,6 +1713,25 @@
                     }).fail(({status}, textStatus, errorThrown) => {
                         $('.facetwp-response').html(status + ' ' + errorThrown);
                     });
+                },
+                getQueryArgs(template) {
+                    let self = this;
+
+                    template.modes.query = 'advanced';
+                    template.query = FWP.__('Loading') + '...';
+
+                    $.post(ajaxurl, {
+                        action: 'facetwp_get_query_args',
+                        query_obj: template.query_obj,
+                        nonce: FWP.nonce
+                    }, (message) => {
+                        var json = JSON.stringify(message, null, 2);
+                        json = "<?php\nreturn " + json + ';';
+                        json = json.replace(/[\{]/g, '[');
+                        json = json.replace(/[\}]/g, ']');
+                        json = json.replace(/:/g, ' =>');
+                        template.query = json;
+                    }, 'json');
                 },
                 showIndexerStats() {
                     this.getInfo('indexer_stats', 'Looking');
