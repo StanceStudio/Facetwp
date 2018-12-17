@@ -15,20 +15,20 @@ class FacetWP_Facet_Number_Range extends FacetWP_Facet
 
         $output = '';
         $value = $params['selected_values'];
-        $value = empty( $value ) ? array( '', '', ) : $value;
+        $value = empty( $value ) ? [ '', '', ] : $value;
         $fields = empty( $params['facet']['fields'] ) ? 'both' : $params['facet']['fields'];
 
         if ( 'exact' == $fields ) {
-            $output .= '<input type="text" class="facetwp-number facetwp-number-min" value="' . esc_attr( $value[0] ) . '" placeholder="' . __( 'Number', 'fwp' ) . '" />';
+            $output .= '<input type="text" class="facetwp-number facetwp-number-min" value="' . esc_attr( $value[0] ) . '" placeholder="' . __( 'Number', 'fwp-front' ) . '" />';
         }
         if ( 'both' == $fields || 'min' == $fields ) {
-            $output .= '<input type="text" class="facetwp-number facetwp-number-min" value="' . esc_attr( $value[0] ) . '" placeholder="' . __( 'Min', 'fwp' ) . '" />';
+            $output .= '<input type="text" class="facetwp-number facetwp-number-min" value="' . esc_attr( $value[0] ) . '" placeholder="' . __( 'Min', 'fwp-front' ) . '" />';
         }
         if ( 'both' == $fields || 'max' == $fields ) {
-            $output .= '<input type="text" class="facetwp-number facetwp-number-max" value="' . esc_attr( $value[1] ) . '" placeholder="' . __( 'Max', 'fwp' ) . '" />';
+            $output .= '<input type="text" class="facetwp-number facetwp-number-max" value="' . esc_attr( $value[1] ) . '" placeholder="' . __( 'Max', 'fwp-front' ) . '" />';
         }
 
-        $output .= '<input type="button" class="facetwp-submit" value="' . __( 'Go', 'fwp' ) . '" />';
+        $output .= '<input type="button" class="facetwp-submit" value="' . __( 'Go', 'fwp-front' ) . '" />';
 
         return $output;
     }
