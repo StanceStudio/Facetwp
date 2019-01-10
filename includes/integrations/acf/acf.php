@@ -14,7 +14,7 @@ class FacetWP_Integration_ACF
 
         add_filter( 'facetwp_facet_sources', [ $this, 'facet_sources' ] );
         add_filter( 'facetwp_indexer_query_args', [ $this, 'lookup_acf_fields' ] );
-        add_filter( 'facetwp_indexer_post_facet', [ $this, 'index_acf_values' ], 1, 2 );
+        add_filter( 'facetwp_indexer_row_data', [ $this, 'get_row_data' ], 1, 2 );
         add_filter( 'facetwp_acf_display_value', [ $this, 'index_source_other' ], 1, 2 );
     }
 
@@ -42,9 +42,9 @@ class FacetWP_Integration_ACF
 
 
     /**
-     * Index ACF field data
+     * Grab the data to index
      */
-    function index_acf_values( $return, $params ) {
+    function get_row_data( $rows, $params ) {
         $defaults = $params['defaults'];
         $facet = $params['facet'];
 
@@ -68,22 +68,24 @@ class FacetWP_Integration_ACF
 
                 foreach ( $value as $key => $val ) {
                     $this->repeater_row = $key;
-                    $this->index_field_value( $val, $sub_field, $defaults );
+                    $new_rows = $this->get_values_to_index( $val, $sub_field, $defaults );
+
+                    foreach ( $new_rows as $new_row ) {
+                        $rows[] = $new_row;
+                    }
                 }
             }
             else {
-
-                // get the field properties
                 $field = $this->get_field_object( $hierarchy[0], $object_id );
+                $new_rows = $this->get_values_to_index( $value, $field, $defaults );
 
-                // index values
-                $this->index_field_value( $value, $field, $defaults );
+                foreach ( $new_rows as $new_row ) {
+                    $rows[] = $new_row;
+                }
             }
-
-            return true;
         }
 
-        return $return;
+        return $rows;
     }
 
 
@@ -176,7 +178,8 @@ class FacetWP_Integration_ACF
     /**
      * Handle advanced field types
      */
-    function index_field_value( $value, $field, $params ) {
+    function get_values_to_index( $value, $field, $params ) {
+        $rows = array();
         $value = maybe_unserialize( $value );
 
         // checkboxes
@@ -189,7 +192,7 @@ class FacetWP_Integration_ACF
 
                     $params['facet_value'] = $val;
                     $params['facet_display_value'] = $display_value;
-                    FWP()->indexer->index_row( $params );
+                    $rows[] = $params;
                 }
             }
         }
@@ -203,7 +206,7 @@ class FacetWP_Integration_ACF
                     if ( false !== get_post_type( $val ) ) {
                         $params['facet_value'] = $val;
                         $params['facet_display_value'] = get_the_title( $val );
-                        FWP()->indexer->index_row( $params );
+                        $rows[] = $params;
                     }
                 }
             }
@@ -219,7 +222,7 @@ class FacetWP_Integration_ACF
                     if ( false !== $user ) {
                         $params['facet_value'] = $val;
                         $params['facet_display_value'] = $user->display_name;
-                        FWP()->indexer->index_row( $params );
+                        $rows[] = $params;
                     }
                 }
             }
@@ -239,7 +242,7 @@ class FacetWP_Integration_ACF
                         $params['facet_value'] = $term->slug;
                         $params['facet_display_value'] = $term->name;
                         $params['term_id'] = $term_id;
-                        FWP()->indexer->index_row( $params );
+                        $rows[] = $params;
                     }
                 }
             }
@@ -250,7 +253,7 @@ class FacetWP_Integration_ACF
             $formatted = $this->format_date( $value );
             $params['facet_value'] = $formatted;
             $params['facet_display_value'] = apply_filters( 'facetwp_acf_display_value', $formatted, $params );
-            FWP()->indexer->index_row( $params );
+            $rows[] = $params;
         }
 
         // true_false
@@ -258,7 +261,7 @@ class FacetWP_Integration_ACF
             $display_value = ( 0 < (int) $value ) ? __( 'Yes', 'fwp' ) : __( 'No', 'fwp' );
             $params['facet_value'] = $value;
             $params['facet_display_value'] = $display_value;
-            FWP()->indexer->index_row( $params );
+            $rows[] = $params;
         }
 
         // google_map
@@ -266,7 +269,7 @@ class FacetWP_Integration_ACF
             if ( isset( $value['lat'] ) && isset( $value['lng'] ) ) {
                 $params['facet_value'] = $value['lat'];
                 $params['facet_display_value'] = $value['lng'];
-                FWP()->indexer->index_row( $params );
+                $rows[] = $params;
             }
         }
 
@@ -274,8 +277,10 @@ class FacetWP_Integration_ACF
         else {
             $params['facet_value'] = $value;
             $params['facet_display_value'] = apply_filters( 'facetwp_acf_display_value', $value, $params );
-            FWP()->indexer->index_row( $params );
+            $rows[] = $params;
         }
+
+        return $rows;
     }
 
 

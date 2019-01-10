@@ -521,4 +521,23 @@ final class FacetWP_Helper
         $license_key = apply_filters( 'facetwp_license_key', $license_key );
         return sanitize_text_field( trim( $license_key ) );
     }
+
+
+    /**
+     * Determine whether the license is active
+     * @since 3.3.0
+     */
+    function is_license_active() {
+        $activation = get_option( 'facetwp_activation' );
+
+        if ( ! empty( $activation ) ) {
+            $activation = json_decode( $activation );
+
+            if ( isset( $activation->status ) && 'success' == $activation->status ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

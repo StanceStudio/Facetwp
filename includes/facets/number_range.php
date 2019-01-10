@@ -48,8 +48,7 @@ class FacetWP_Facet_Number_Range extends FacetWP_Facet
         $max = ( '' == $values[1] ) ? false : FWP()->helper->format_number( $values[1] );
 
         $fields = isset( $facet['fields'] ) ? $facet['fields'] : 'both';
-        $compare_type = isset( $facet['compare_type'] ) ? $facet['compare_type'] : '';
-        $compare_type = empty( $compare_type ) ? 'basic' : $compare_type;
+        $compare_type = empty( $facet['compare_type'] ) ? 'basic' : $facet['compare_type'];
         $is_dual = ! empty( $facet['source_other'] );
 
         if ( $is_dual && 'basic' != $compare_type ) {

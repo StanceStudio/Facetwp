@@ -99,6 +99,22 @@
     cursor: default;
 }
 
+.facetwp-type-fselect .fs-option .fs-option-label {
+    white-space: nowrap;
+}
+
+.facetwp-type-fselect .fs-option.d1 .fs-option-label {
+    padding-left: 20px;
+}
+
+.facetwp-type-fselect .fs-option.d2 .fs-option-label {
+    padding-left: 40px;
+}
+
+.facetwp-type-fselect .fs-option.d3 .fs-option-label {
+    padding-left: 60px;
+}
+
 /* Hierarchy */
 
 .facetwp-depth {

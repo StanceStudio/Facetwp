@@ -1429,7 +1429,7 @@
                     // Add setting names by parsing the DOM
                     $(html).find('input, textarea, select').each(function() {
                         let $el = $(this);
-                        let setting_name = $el.attr('class').replace(/-/g, '_').substr(6);
+                        let setting_name = $el.attr('class').split(' ')[0].replace(/-/g, '_').substr(6);
                         custom_settings.push(setting_name);
 
                         let is_new_type = (self.facet.type !== self.original_facet_type);
@@ -1524,6 +1524,12 @@
             },
             computed: {
                 modelName() {
+
+                    // create the setting if needed
+                    if ('undefined' === typeof this.facet[this.settingName]) {
+                        Vue.set(this.facet, this.settingName, '');
+                    }
+
                     return this.facet[this.settingName];
                 }
             },

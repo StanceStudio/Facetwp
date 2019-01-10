@@ -126,20 +126,15 @@ class FacetWP_Facet_fSelect extends FacetWP_Facet
             $selected = in_array( $result['facet_value'], $selected_values ) ? ' selected' : '';
             $selected .= ( 0 == $result['counter'] && '' == $selected ) ? ' disabled' : '';
 
-            $display_value = '';
-            for ( $i = 0; $i < (int) $result['depth']; $i++ ) {
-                $display_value .= '&nbsp;&nbsp;';
-            }
-
             // Determine whether to show counts
-            $display_value .= esc_html( $result['facet_display_value'] );
+            $display_value = esc_html( $result['facet_display_value'] );
             $show_counts = apply_filters( 'facetwp_facet_dropdown_show_counts', true, [ 'facet' => $facet ] );
 
             if ( $show_counts ) {
                 $display_value .= ' {{(' . $result['counter'] . ')}}';
             }
 
-            $output .= '<option value="' . esc_attr( $result['facet_value'] ) . '"' . $selected . '>' . $display_value . '</option>';
+            $output .= '<option value="' . esc_attr( $result['facet_value'] ) . '" class="d' . $result['depth'] . '"' . $selected . '>' . $display_value . '</option>';
         }
 
         $output .= '</select>';

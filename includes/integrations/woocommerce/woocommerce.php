@@ -404,7 +404,7 @@ class FacetWP_Integration_WooCommerce
             elseif ( 'stock_status' == $source ) {
                 $in_stock = $product->is_in_stock();
                 $defaults['facet_value'] = (int) $in_stock;
-                $defaults['facet_display_value'] = $in_stock ? __( 'In Stock', 'fwp' ) : __( 'Out of Stock', 'fwp' );
+                $defaults['facet_display_value'] = $in_stock ? __( 'In Stock', 'fwp-front' ) : __( 'Out of Stock', 'fwp-front' );
                 FWP()->indexer->index_row( $defaults );
             }
 
@@ -412,7 +412,7 @@ class FacetWP_Integration_WooCommerce
             elseif ( 'on_sale' == $source ) {
                 if ( $product->is_on_sale() ) {
                     $defaults['facet_value'] = 1;
-                    $defaults['facet_display_value'] = __( 'On Sale', 'fwp' );
+                    $defaults['facet_display_value'] = __( 'On Sale', 'fwp-front' );
                     FWP()->indexer->index_row( $defaults );
                 }
             }

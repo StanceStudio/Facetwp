@@ -56,7 +56,10 @@ class FacetWP_Init
 
         // update checks
         include( FACETWP_DIR . '/includes/class-updater.php' );
-        include( FACETWP_DIR . '/includes/libraries/github-updater.php' );
+
+        if ( FWP()->helper->is_license_active() ) {
+            include( FACETWP_DIR . '/includes/libraries/github-updater.php' );
+        }
 
         // hooks
         add_action( 'admin_menu', [ $this, 'admin_menu' ] );
@@ -71,13 +74,12 @@ class FacetWP_Init
      * i18n support
      */
     function load_textdomain() {
-        $locale = apply_filters( 'plugin_locale', get_locale(), 'fwp' );
 
         // admin-facing
-        load_textdomain( 'fwp', WP_LANG_DIR . "/facetwp/fwp-$locale.mo" );
+        load_plugin_textdomain( 'fwp' );
 
         // front-facing
-        load_textdomain( 'fwp-front', FACETWP_DIR . "/languages/fwp-front-$locale.mo" );
+        load_plugin_textdomain( 'fwp-front', false, basename( FACETWP_DIR ) . '/languages' );
     }
 
 
