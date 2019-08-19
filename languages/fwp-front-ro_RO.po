@@ -2,49 +2,49 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FacetWP (front)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-17 23:33+0000\n"
-"PO-Revision-Date: 2018-12-17 18:43-0500\n"
+"POT-Creation-Date: 2019-01-30 19:01+0000\n"
+"PO-Revision-Date: 2019-01-30 14:12-0500\n"
 "Last-Translator: Matt Gibbs <hello@facetwp.com>\n"
-"Language-Team: Matt Gibbs <hello@facetwp.com>\n"
+"Language-Team: Romanian\n"
 "Language: ro_RO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n==0 || (n!=1 && n%100>=1 && n"
-"%100<=19) ? 1 : 2);\n"
-"X-Generator: Poedit 2.2\n"
-"X-Loco-Version: 2.2.0; wp-5.1-alpha-43678\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n==0 || (n!=1 && n%100>=1 && "
+"n%100<=19) ? 1 : 2);\n"
+"X-Generator: Poedit 2.2.1\n"
+"X-Loco-Version: 2.2.0; wp-5.0.3\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: includes/class-renderer.php:516 includes/class-renderer.php:633
+#: includes/class-renderer.php:519 includes/class-renderer.php:636
 msgid "of"
 msgstr "din"
 
-#: includes/class-renderer.php:550
+#: includes/class-renderer.php:553
 msgid "Sort by"
 msgstr "Sortare după"
 
-#: includes/class-renderer.php:554
+#: includes/class-renderer.php:557
 msgid "Title (A-Z)"
 msgstr "Titlu (A-Z)"
 
-#: includes/class-renderer.php:561
+#: includes/class-renderer.php:564
 msgid "Title (Z-A)"
 msgstr "Titlu (Z-A)"
 
-#: includes/class-renderer.php:568
+#: includes/class-renderer.php:571
 msgid "Date (Newest)"
 msgstr "Data (cele mai noi)"
 
-#: includes/class-renderer.php:575
+#: includes/class-renderer.php:578
 msgid "Date (Oldest)"
 msgstr "Data (cea mai veche)"
 
-#: includes/class-renderer.php:632
+#: includes/class-renderer.php:635
 msgid "Page"
 msgstr "Pagină"
 
-#: includes/class-renderer.php:683
+#: includes/class-renderer.php:686
 msgid "Per page"
 msgstr "Per pagină"
 
@@ -60,20 +60,20 @@ msgstr "Vezi {num} mai multe"
 msgid "See less"
 msgstr "Vedea mai puțin"
 
-#: includes/facets/fselect.php:119 includes/facets/fselect.php:193
+#: includes/facets/fselect.php:119 includes/facets/fselect.php:188
 #: includes/facets/dropdown.php:59 includes/facets/hierarchy.php:67
 msgid "Any"
 msgstr "Orice"
 
-#: includes/facets/fselect.php:198
+#: includes/facets/fselect.php:193
 msgid "{n} selected"
 msgstr "{n} selectat"
 
-#: includes/facets/fselect.php:199
+#: includes/facets/fselect.php:194
 msgid "Search"
 msgstr "Caută"
 
-#: includes/facets/fselect.php:200
+#: includes/facets/fselect.php:195
 msgid "No results found"
 msgstr "Niciun rezultat găsit"
 
@@ -109,15 +109,15 @@ msgstr "Data de început"
 msgid "End Date"
 msgstr "Data de sfârșit"
 
-#: includes/facets/date_range.php:113
+#: includes/facets/date_range.php:112
 msgid "Clear"
 msgstr "Sterge"
 
-#: includes/facets/date_range.php:114
+#: includes/facets/date_range.php:113
 msgid "from"
 msgstr "de la"
 
-#: includes/facets/date_range.php:115
+#: includes/facets/date_range.php:114
 msgid "to"
 msgstr "catre"
 
@@ -164,3 +164,11 @@ msgstr "Stoc epuizat"
 #: includes/integrations/woocommerce/woocommerce.php:415
 msgid "On Sale"
 msgstr "La reducere"
+
+#: includes/integrations/acf/acf.php:262
+msgid "Yes"
+msgstr "Da"
+
+#: includes/integrations/acf/acf.php:262
+msgid "No"
+msgstr "Nu"

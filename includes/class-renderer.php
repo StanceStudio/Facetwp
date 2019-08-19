@@ -113,7 +113,7 @@ class FacetWP_Renderer
         // Run the query once (prevent duplicate queries when preloading)
         if ( empty( $this->query_args ) ) {
 
-            // Support "post__in" arg
+            // Support "post__in"
             if ( empty( $query_args['post__in'] ) ) {
                 $query_args['post__in'] = [];
             }
@@ -126,6 +126,9 @@ class FacetWP_Renderer
 
             // Narrow the posts based on the selected facets
             $post_ids = $this->get_filtered_post_ids();
+
+            // Preserve SQL_CALC_FOUND_ROWS
+            unset( $this->query_args['no_found_rows'] );
 
             // Update the SQL query
             if ( ! empty( $post_ids ) ) {
@@ -167,12 +170,25 @@ class FacetWP_Renderer
 
         // Debug
         if ( 'on' == FWP()->helper->get_setting( 'debug_mode', 'off' ) ) {
-            $output['settings']['debug'] = [
+            $debug = [
                 'query_args'    => $this->query_args,
                 'sql'           => $this->query->request,
                 'facets'        => $this->facets,
                 'template'      => $this->template,
             ];
+
+            // Reduce debug payload
+            if ( ! empty( $this->query_args['post__in'] ) ) {
+                $debug['query_args']['post__in_count'] = count( $this->query_args['post__in'] );
+                $debug['query_args']['post__in'] = array_slice( $this->query_args['post__in'], 0, 10 );
+
+                $debug['sql'] = preg_replace_callback( '/posts.ID IN \((.*?)\)/s', function( $matches ) {
+                    $count = substr_count( $matches[1], ',' ) + 1;
+                    return "posts.ID IN (<$count IDs>)";
+                }, $debug['sql'] );
+
+                $output['settings']['debug'] = $debug;
+            }
         }
 
         // Generate the template HTML
@@ -381,6 +397,7 @@ class FacetWP_Renderer
             'update_post_term_cache' => false,
             'cache_results' => false,
             'no_found_rows' => true,
+            'nopaging' => true, // prevent "offset" issues
             'fields' => 'ids',
         ] );
 
@@ -436,20 +453,23 @@ class FacetWP_Renderer
             // Required for dropdowns and checkboxes in "or" mode
             FWP()->or_values[ $facet_name ] = $matches;
 
-            // Preserve post ID order for search facets
             if ( 'search' == $facet_type ) {
                 $this->is_search = true;
-                $intersected_ids = [];
-                foreach ( $matches as $match ) {
-                    if ( in_array( $match, $post_ids ) ) {
-                        $intersected_ids[] = $match;
-                    }
+            }
+
+            // Store post IDs as array keys for faster lookups
+            $id_lookup = array_flip( $post_ids );
+
+            // Preserve post ID order
+            $intersected_ids = [];
+
+            foreach ( $matches as $match ) {
+                if ( isset( $id_lookup[ $match ] ) ) {
+                    $intersected_ids[] = $match;
                 }
-                $post_ids = $intersected_ids;
             }
-            else {
-                $post_ids = array_intersect( $post_ids, $matches );
-            }
+
+            $post_ids = $intersected_ids;
         }
 
         // Return a zero array if no matches

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FacetWP (front)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-17 23:33+0000\n"
+"POT-Creation-Date: 2019-01-30 19:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Matt Gibbs <hello@facetwp.com>\n"
@@ -16,35 +16,35 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Language: "
 
-#: includes/class-renderer.php:516 includes/class-renderer.php:633
+#: includes/class-renderer.php:519 includes/class-renderer.php:636
 msgid "of"
 msgstr ""
 
-#: includes/class-renderer.php:550
+#: includes/class-renderer.php:553
 msgid "Sort by"
 msgstr ""
 
-#: includes/class-renderer.php:554
+#: includes/class-renderer.php:557
 msgid "Title (A-Z)"
 msgstr ""
 
-#: includes/class-renderer.php:561
+#: includes/class-renderer.php:564
 msgid "Title (Z-A)"
 msgstr ""
 
-#: includes/class-renderer.php:568
+#: includes/class-renderer.php:571
 msgid "Date (Newest)"
 msgstr ""
 
-#: includes/class-renderer.php:575
+#: includes/class-renderer.php:578
 msgid "Date (Oldest)"
 msgstr ""
 
-#: includes/class-renderer.php:632
+#: includes/class-renderer.php:635
 msgid "Page"
 msgstr ""
 
-#: includes/class-renderer.php:683
+#: includes/class-renderer.php:686
 msgid "Per page"
 msgstr ""
 
@@ -60,20 +60,20 @@ msgstr ""
 msgid "See less"
 msgstr ""
 
-#: includes/facets/fselect.php:119 includes/facets/fselect.php:193
+#: includes/facets/fselect.php:119 includes/facets/fselect.php:188
 #: includes/facets/dropdown.php:59 includes/facets/hierarchy.php:67
 msgid "Any"
 msgstr ""
 
-#: includes/facets/fselect.php:198
+#: includes/facets/fselect.php:193
 msgid "{n} selected"
 msgstr ""
 
-#: includes/facets/fselect.php:199
+#: includes/facets/fselect.php:194
 msgid "Search"
 msgstr ""
 
-#: includes/facets/fselect.php:200
+#: includes/facets/fselect.php:195
 msgid "No results found"
 msgstr ""
 
@@ -109,15 +109,15 @@ msgstr ""
 msgid "End Date"
 msgstr ""
 
-#: includes/facets/date_range.php:113
+#: includes/facets/date_range.php:112
 msgid "Clear"
 msgstr ""
 
-#: includes/facets/date_range.php:114
+#: includes/facets/date_range.php:113
 msgid "from"
 msgstr ""
 
-#: includes/facets/date_range.php:115
+#: includes/facets/date_range.php:114
 msgid "to"
 msgstr ""
 
@@ -163,4 +163,12 @@ msgstr ""
 
 #: includes/integrations/woocommerce/woocommerce.php:415
 msgid "On Sale"
+msgstr ""
+
+#: includes/integrations/acf/acf.php:262
+msgid "Yes"
+msgstr ""
+
+#: includes/integrations/acf/acf.php:262
+msgid "No"
 msgstr ""

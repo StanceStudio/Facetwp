@@ -105,7 +105,10 @@ window.FWP = window.FWP || {};
 
     FWP.helper.detect_loop = function(node) {
         var curNode = null;
-        var iterator = document.createNodeIterator(node, NodeFilter.SHOW_COMMENT, FWP.helper.node_filter, false);
+        var iterator = document.createNodeIterator(node, NodeFilter.SHOW_COMMENT, function() {
+            return NodeFilter.FILTER_ACCEPT; /* IE expects a function */
+        }, false);
+
         while (curNode = iterator.nextNode()) {
             if (8 === curNode.nodeType && 'fwp-loop' === curNode.nodeValue) {
                 return curNode.parentNode;
@@ -113,11 +116,6 @@ window.FWP = window.FWP || {};
         }
 
         return false;
-    }
-
-
-    FWP.helper.node_filter = function() {
-        return NodeFilter.FILTER_ACCEPT;
     }
 
 
@@ -491,34 +489,24 @@ window.FWP = window.FWP || {};
     }
 
 
-    FWP.reset = function(facet_name, facet_value) {
+    FWP.reset = function(facets) {
         FWP.parse_facets();
 
-        if (isset(facet_name)) {
-            var values = FWP.facets[facet_name];
-            if (isset(facet_value) && values.length > 1) {
-                var arr_idx = values.indexOf(facet_value);
-                if (-1 < arr_idx) {
-                    values.splice(arr_idx, 1);
-                    FWP.facets[facet_name] = values;
-                }
-            }
-            else {
-                FWP.facets[facet_name] = [];
-                delete FWP.frozen_facets[facet_name];
-            }
-        }
-        else {
-            $.each(FWP.facets, function(f) {
-                FWP.facets[f] = [];
-            });
+        var facets = ('string' === typeof facets) ? [facets] : facets;
 
+        $.each(FWP.facets, function(f) {
+            if (! isset(facets) || -1 < $.inArray(f, facets)) {
+                FWP.facets[f] = [];
+                delete FWP.frozen_facets[f];
+            }
+        });
+
+        if (! isset(facets)) {
             FWP.extras.sort = 'default';
             FWP.frozen_facets = {};
         }
 
         FWP.hooks.doAction('facetwp/reset');
-
         FWP.is_reset = true;
         FWP.refresh();
     }

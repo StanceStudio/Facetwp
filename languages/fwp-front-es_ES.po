@@ -2,48 +2,48 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FacetWP (front)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-17 23:33+0000\n"
-"PO-Revision-Date: 2018-12-17 18:45-0500\n"
+"POT-Creation-Date: 2019-01-30 19:01+0000\n"
+"PO-Revision-Date: 2019-08-05 17:31+0000\n"
 "Last-Translator: Matt Gibbs <hello@facetwp.com>\n"
-"Language-Team: Matt Gibbs <hello@facetwp.com>\n"
+"Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2\n"
-"X-Loco-Version: 2.2.0; wp-5.1-alpha-43678\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.3.0; wp-5.2.2\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: includes/class-renderer.php:516 includes/class-renderer.php:633
+#: includes/class-renderer.php:519 includes/class-renderer.php:636
 msgid "of"
 msgstr "de"
 
-#: includes/class-renderer.php:550
+#: includes/class-renderer.php:553
 msgid "Sort by"
 msgstr "Ordenar por"
 
-#: includes/class-renderer.php:554
+#: includes/class-renderer.php:557
 msgid "Title (A-Z)"
 msgstr "Título (A-Z)"
 
-#: includes/class-renderer.php:561
+#: includes/class-renderer.php:564
 msgid "Title (Z-A)"
 msgstr "Título (Z-A)"
 
-#: includes/class-renderer.php:568
+#: includes/class-renderer.php:571
 msgid "Date (Newest)"
 msgstr "Fecha (más reciente)"
 
-#: includes/class-renderer.php:575
+#: includes/class-renderer.php:578
 msgid "Date (Oldest)"
 msgstr "Fecha (más antigua)"
 
-#: includes/class-renderer.php:632
+#: includes/class-renderer.php:635
 msgid "Page"
 msgstr "Página"
 
-#: includes/class-renderer.php:683
+#: includes/class-renderer.php:686
 msgid "Per page"
 msgstr "Por página"
 
@@ -59,20 +59,20 @@ msgstr "Ver {num} más"
 msgid "See less"
 msgstr "Ver menos"
 
-#: includes/facets/fselect.php:119 includes/facets/fselect.php:193
+#: includes/facets/fselect.php:119 includes/facets/fselect.php:188
 #: includes/facets/dropdown.php:59 includes/facets/hierarchy.php:67
 msgid "Any"
 msgstr "Cualquiera"
 
-#: includes/facets/fselect.php:198
+#: includes/facets/fselect.php:193
 msgid "{n} selected"
-msgstr "{n} seleccionado"
+msgstr "{n} selecciones"
 
-#: includes/facets/fselect.php:199
+#: includes/facets/fselect.php:194
 msgid "Search"
 msgstr "Buscar"
 
-#: includes/facets/fselect.php:200
+#: includes/facets/fselect.php:195
 msgid "No results found"
 msgstr "No se han encontrado resultados"
 
@@ -108,15 +108,15 @@ msgstr "Fecha de inicio"
 msgid "End Date"
 msgstr "Fecha de finalización"
 
-#: includes/facets/date_range.php:113
+#: includes/facets/date_range.php:112
 msgid "Clear"
 msgstr "Limpiar"
 
-#: includes/facets/date_range.php:114
+#: includes/facets/date_range.php:113
 msgid "from"
 msgstr "desde"
 
-#: includes/facets/date_range.php:115
+#: includes/facets/date_range.php:114
 msgid "to"
 msgstr "a"
 
@@ -163,3 +163,11 @@ msgstr "Agotado"
 #: includes/integrations/woocommerce/woocommerce.php:415
 msgid "On Sale"
 msgstr "En oferta"
+
+#: includes/integrations/acf/acf.php:262
+msgid "Yes"
+msgstr "Sí"
+
+#: includes/integrations/acf/acf.php:262
+msgid "No"
+msgstr "No"

@@ -14,8 +14,9 @@ class FacetWP_Integration_ACF
 
         add_filter( 'facetwp_facet_sources', [ $this, 'facet_sources' ] );
         add_filter( 'facetwp_indexer_query_args', [ $this, 'lookup_acf_fields' ] );
-        add_filter( 'facetwp_indexer_row_data', [ $this, 'get_row_data' ], 1, 2 );
+        add_filter( 'facetwp_indexer_post_facet', [ $this, 'index_acf_values' ], 1, 2 );
         add_filter( 'facetwp_acf_display_value', [ $this, 'index_source_other' ], 1, 2 );
+        add_filter( 'facetwp_builder_item_value', [ $this, 'layout_builder_values' ], 1, 2 );
     }
 
 
@@ -33,8 +34,12 @@ class FacetWP_Integration_ACF
 
         foreach ( $fields as $field ) {
             $field_id = $field['hierarchy'];
+            $field_name = $field['name'];
             $field_label = '[' . $field['group_title'] . '] ' . $field['parents'] . $field['label'];
             $sources['acf']['choices'][ "acf/$field_id" ] = $field_label;
+
+            // remove "hidden" ACF fields
+            unset( $sources['custom_fields']['choices'][ "cf/_$field_name" ] );
         }
 
         return $sources;
@@ -42,16 +47,16 @@ class FacetWP_Integration_ACF
 
 
     /**
-     * Grab the data to index
+     * Index ACF field data
      */
-    function get_row_data( $rows, $params ) {
+    function index_acf_values( $return, $params ) {
         $defaults = $params['defaults'];
         $facet = $params['facet'];
 
         if ( isset( $facet['source'] ) && 'acf/' == substr( $facet['source'], 0, 4 ) ) {
             $hierarchy = explode( '/', substr( $facet['source'], 4 ) );
 
-            // Support "User Post Type" plugin
+            // support "User Post Type" plugin
             $object_id = apply_filters( 'facetwp_acf_object_id', $defaults['post_id'] );
 
             // get values (for sub-fields, use the parent repeater)
@@ -68,24 +73,24 @@ class FacetWP_Integration_ACF
 
                 foreach ( $value as $key => $val ) {
                     $this->repeater_row = $key;
-                    $new_rows = $this->get_values_to_index( $val, $sub_field, $defaults );
-
-                    foreach ( $new_rows as $new_row ) {
-                        $rows[] = $new_row;
-                    }
+                    $rows = $this->get_values_to_index( $val, $sub_field, $defaults );
+                    $this->index_field_values( $rows );
                 }
             }
             else {
-                $field = $this->get_field_object( $hierarchy[0], $object_id );
-                $new_rows = $this->get_values_to_index( $value, $field, $defaults );
 
-                foreach ( $new_rows as $new_row ) {
-                    $rows[] = $new_row;
-                }
+                // get the field properties
+                $field = $this->get_field_object( $hierarchy[0], $object_id );
+
+                // index values
+                $rows = $this->get_values_to_index( $value, $field, $defaults );
+                $this->index_field_values( $rows );
             }
+
+            return true;
         }
 
-        return $rows;
+        return $return;
     }
 
 
@@ -135,7 +140,6 @@ class FacetWP_Integration_ACF
             return [];
         }
 
-        // vars
         $temp_val = [];
         $parent_field_type = $this->parent_type_lookup[ $parent_field_key ];
 
@@ -176,14 +180,17 @@ class FacetWP_Integration_ACF
 
 
     /**
-     * Handle advanced field types
+     * Get an array of $params arrays
+     * Useful for indexing and grabbing values for the Layout Builder
+     * @since 3.4.0
      */
     function get_values_to_index( $value, $field, $params ) {
-        $rows = array();
         $value = maybe_unserialize( $value );
+        $type = $field['type'];
+        $output = [];
 
         // checkboxes
-        if ( 'checkbox' == $field['type'] || 'select' == $field['type'] || 'radio' == $field['type'] ) {
+        if ( 'checkbox' == $type || 'select' == $type || 'radio' == $type ) {
             if ( false !== $value ) {
                 foreach ( (array) $value as $val ) {
                     $display_value = isset( $field['choices'][ $val ] ) ?
@@ -192,13 +199,13 @@ class FacetWP_Integration_ACF
 
                     $params['facet_value'] = $val;
                     $params['facet_display_value'] = $display_value;
-                    $rows[] = $params;
+                    $output[] = $params;
                 }
             }
         }
 
         // relationship
-        elseif ( 'relationship' == $field['type'] || 'post_object' == $field['type'] ) {
+        elseif ( 'relationship' == $type || 'post_object' == $type || 'page_link' == $type ) {
             if ( false !== $value ) {
                 foreach ( (array) $value as $val ) {
 
@@ -206,14 +213,14 @@ class FacetWP_Integration_ACF
                     if ( false !== get_post_type( $val ) ) {
                         $params['facet_value'] = $val;
                         $params['facet_display_value'] = get_the_title( $val );
-                        $rows[] = $params;
+                        $output[] = $params;
                     }
                 }
             }
         }
 
         // user
-        elseif ( 'user' == $field['type'] ) {
+        elseif ( 'user' == $type ) {
             if ( false !== $value )  {
                 foreach ( (array) $value as $val ) {
                     $user = get_user_by( 'id', $val );
@@ -222,14 +229,14 @@ class FacetWP_Integration_ACF
                     if ( false !== $user ) {
                         $params['facet_value'] = $val;
                         $params['facet_display_value'] = $user->display_name;
-                        $rows[] = $params;
+                        $output[] = $params;
                     }
                 }
             }
         }
 
         // taxonomy
-        elseif ( 'taxonomy' == $field['type'] ) {
+        elseif ( 'taxonomy' == $type ) {
             if ( ! empty( $value ) ) {
                 foreach ( (array) $value as $val ) {
                     global $wpdb;
@@ -242,34 +249,35 @@ class FacetWP_Integration_ACF
                         $params['facet_value'] = $term->slug;
                         $params['facet_display_value'] = $term->name;
                         $params['term_id'] = $term_id;
-                        $rows[] = $params;
+                        $output[] = $params;
                     }
                 }
             }
         }
 
         // date_picker
-        elseif ( 'date_picker' == $field['type'] ) {
+        elseif ( 'date_picker' == $type ) {
             $formatted = $this->format_date( $value );
             $params['facet_value'] = $formatted;
             $params['facet_display_value'] = apply_filters( 'facetwp_acf_display_value', $formatted, $params );
-            $rows[] = $params;
+            $output[] = $params;
         }
 
         // true_false
-        elseif ( 'true_false' == $field['type'] ) {
-            $display_value = ( 0 < (int) $value ) ? __( 'Yes', 'fwp' ) : __( 'No', 'fwp' );
+        elseif ( 'true_false' == $type ) {
+            $display_value = ( 0 < (int) $value ) ? __( 'Yes', 'fwp-front' ) : __( 'No', 'fwp-front' );
             $params['facet_value'] = $value;
             $params['facet_display_value'] = $display_value;
-            $rows[] = $params;
+            $output[] = $params;
         }
 
         // google_map
-        elseif ( 'google_map' == $field['type'] ) {
+        elseif ( 'google_map' == $type ) {
             if ( isset( $value['lat'] ) && isset( $value['lng'] ) ) {
                 $params['facet_value'] = $value['lat'];
                 $params['facet_display_value'] = $value['lng'];
-                $rows[] = $params;
+                $params['place_address'] = $value['address'];
+                $output[] = $params;
             }
         }
 
@@ -277,10 +285,20 @@ class FacetWP_Integration_ACF
         else {
             $params['facet_value'] = $value;
             $params['facet_display_value'] = apply_filters( 'facetwp_acf_display_value', $value, $params );
-            $rows[] = $params;
+            $output[] = $params;
         }
 
-        return $rows;
+        return $output;
+    }
+
+
+    /**
+     * Index values
+     */
+    function index_field_values( $rows ) {
+        foreach ( $rows as $params ) {
+            FWP()->indexer->index_row( $params );
+        }
     }
 
 
@@ -293,10 +311,10 @@ class FacetWP_Integration_ACF
         if ( ! empty( $facet['source_other'] ) ) {
             $hierarchy = explode( '/', substr( $facet['source_other'], 4 ) );
 
-            // Support "User Post Type" plugin
+            // support "User Post Type" plugin
             $object_id = apply_filters( 'facetwp_acf_object_id', $params['post_id'] );
 
-            // Get the value
+            // get the value
             $value = get_field( $hierarchy[0], $object_id, false );
 
             // handle repeater values
@@ -404,6 +422,49 @@ class FacetWP_Integration_ACF
                 ];
             }
         }
+    }
+
+
+    /**
+     * Support the layout builder
+     * @since 3.4.0
+     */
+    function layout_builder_values( $value, $item ) {
+        global $post;
+
+        $post_id = (int) $post->ID;
+        $source = isset( $item['source'] ) ? $item['source'] : '';
+
+        if ( 'acf/' == substr( $source, 0, 4 ) ) {
+            $hierarchy = explode( '/', substr( $source, 4 ) );
+
+            // only support non-repeater fields for now
+            if ( 1 == count( $hierarchy ) ) {
+
+                // support "User Post Type" plugin
+                $object_id = apply_filters( 'facetwp_acf_object_id', $post_id );
+
+                // get raw values
+                $value = get_field( $hierarchy[0], $object_id, false );
+
+                // get the field properties
+                $field = $this->get_field_object( $hierarchy[0], $object_id );
+
+                // get processed values
+                $rows = $this->get_values_to_index( $value, $field, $defaults );
+
+                $value = [];
+
+                foreach ( $rows as $row ) {
+                    $val = ( 'google_map' == $field['type'] ) ? $row['place_address'] : $row['facet_display_value'];
+                    $value[] = $val;
+                }
+
+                $value = implode( ', ', $value );
+            }
+        }
+
+        return $value;
     }
 }
 
