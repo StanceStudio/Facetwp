@@ -16,7 +16,7 @@ class FacetWP_Integration_ACF
         add_filter( 'facetwp_indexer_query_args', [ $this, 'lookup_acf_fields' ] );
         add_filter( 'facetwp_indexer_post_facet', [ $this, 'index_acf_values' ], 1, 2 );
         add_filter( 'facetwp_acf_display_value', [ $this, 'index_source_other' ], 1, 2 );
-        add_filter( 'facetwp_builder_item_value', [ $this, 'layout_builder_values' ], 1, 2 );
+        add_filter( 'facetwp_builder_item_value', [ $this, 'layout_builder_values' ], 999, 2 );
     }
 
 
@@ -306,27 +306,29 @@ class FacetWP_Integration_ACF
      * Handle "source_other" setting
      */
     function index_source_other( $value, $params ) {
-        $facet = FWP()->helper->get_facet_by_name( $params['facet_name'] );
+        if ( ! empty( $params['facet_name'] ) ) {
+            $facet = FWP()->helper->get_facet_by_name( $params['facet_name'] );
 
-        if ( ! empty( $facet['source_other'] ) ) {
-            $hierarchy = explode( '/', substr( $facet['source_other'], 4 ) );
+            if ( ! empty( $facet['source_other'] ) ) {
+                $hierarchy = explode( '/', substr( $facet['source_other'], 4 ) );
 
-            // support "User Post Type" plugin
-            $object_id = apply_filters( 'facetwp_acf_object_id', $params['post_id'] );
+                // support "User Post Type" plugin
+                $object_id = apply_filters( 'facetwp_acf_object_id', $params['post_id'] );
 
-            // get the value
-            $value = get_field( $hierarchy[0], $object_id, false );
+                // get the value
+                $value = get_field( $hierarchy[0], $object_id, false );
 
-            // handle repeater values
-            if ( 1 < count( $hierarchy ) ) {
-                $parent_field_key = array_shift( $hierarchy );
-                $value = $this->process_field_value( $value, $hierarchy, $parent_field_key );
-                $value = $value[ $this->repeater_row ];
+                // handle repeater values
+                if ( 1 < count( $hierarchy ) ) {
+                    $parent_field_key = array_shift( $hierarchy );
+                    $value = $this->process_field_value( $value, $hierarchy, $parent_field_key );
+                    $value = $value[ $this->repeater_row ];
+                }
             }
-        }
 
-        if ( 'date_range' == $facet['type'] ) {
-            $value = $this->format_date( $value );
+            if ( 'date_range' == $facet['type'] ) {
+                $value = $this->format_date( $value );
+            }
         }
 
         return $value;
@@ -426,42 +428,107 @@ class FacetWP_Integration_ACF
 
 
     /**
-     * Support the layout builder
+     * Get the field value (support User Post Type)
+     * @since 3.4.1
+     */
+    function get_field( $source, $post_id ) {
+        $hierarchy = explode( '/', substr( $source, 4 ) );
+        $object_id = apply_filters( 'facetwp_acf_object_id', $post_id );
+        return get_field( $hierarchy[0], $object_id );
+    }
+
+
+    /**
+     * Fallback values for the layout builder
      * @since 3.4.0
+     * 
+     * ACF return formats:
+     * [image, file] = array, url, id
+     * [select, checkbox, radio, button_group] = value, label, array (both)
+     * [post_object, relationship, taxonomy] = object, id
+     * [user] = array, object, id
+     * [link] = array, url
      */
     function layout_builder_values( $value, $item ) {
         global $post;
 
-        $post_id = (int) $post->ID;
-        $source = isset( $item['source'] ) ? $item['source'] : '';
+        // exit if not an object or array
+        if ( is_scalar( $value ) || is_null( $value ) ) {
+            return $value;
+        }
 
-        if ( 'acf/' == substr( $source, 0, 4 ) ) {
-            $hierarchy = explode( '/', substr( $source, 4 ) );
+        $hierarchy = explode( '/', substr( $item['source'], 4 ) );
 
-            // only support non-repeater fields for now
-            if ( 1 == count( $hierarchy ) ) {
+        // support "User Post Type" plugin
+        $object_id = apply_filters( 'facetwp_acf_object_id', $post->ID );
 
-                // support "User Post Type" plugin
-                $object_id = apply_filters( 'facetwp_acf_object_id', $post_id );
+        // get the field properties
+        $field = $this->get_field_object( $hierarchy[0], $object_id );
 
-                // get raw values
-                $value = get_field( $hierarchy[0], $object_id, false );
+        $type = $field['type'];
+        $format = isset( $field['return_format'] ) ? $field['return_format'] : '';
+        $is_multiple = isset( $field['multiple'] ) ? (bool) $field['multiple'] : false;
 
-                // get the field properties
-                $field = $this->get_field_object( $hierarchy[0], $object_id );
+        if ( ( 'post_object' == $type || 'relationship' == $type ) && 'object' == $format ) {
+            $output = [];
 
-                // get processed values
-                $rows = $this->get_values_to_index( $value, $field, $defaults );
+            $value = is_array( $value ) ? $value : [ $value ];
 
-                $value = [];
-
-                foreach ( $rows as $row ) {
-                    $val = ( 'google_map' == $field['type'] ) ? $row['place_address'] : $row['facet_display_value'];
-                    $value[] = $val;
-                }
-
-                $value = implode( ', ', $value );
+            foreach ( $value as $val ) {
+                $output[] = '<a href="' . get_permalink( $val->ID ) . '">' . esc_html( $val->post_title ) . '</a>';
             }
+
+            $value = $output;
+        }
+
+        if ( 'taxonomy' == $type && 'object' == $format ) {
+            $output = [];
+
+            foreach ( $value as $val ) {
+                $output[] = $val->name;
+            }
+
+            $value = $output;
+        }
+
+        if ( ( 'select' == $type || 'checkbox' == $type || 'radio' == $type || 'button_group' == $type ) && 'array' == $format ) {
+            $value = wp_list_pluck( $value, 'label' );
+        }
+
+        if ( ( 'image' == $type || 'gallery' == $type ) && 'array' == $format ) {
+            $value = ( 'image' == $type ) ? [ $value ] : $value;
+
+            foreach ( $value as $val ) {
+                $value = '<img src="' . esc_url( $val['url'] ) . '" title="' . esc_attr( $val['title'] ) . '" alt="' . esc_attr( $val['alt'] ) . '" />';
+            }
+        }
+
+        if ( 'file' == $type && 'array' == $format ) {
+            $value = '<a href="' . esc_url( $value['url'] ) . '">' . esc_html( $value['filename'] ) . '</a> (' . size_format( $value['filesize'], 1 ) . ')';
+        }
+
+        if ( 'link' == $type && 'array' == $format ) {
+            $value = '<a href="' . esc_url( $value['url'] ) . '" target="' . esc_attr( $value['target'] ) . '">' . esc_html( $value['title'] ) . '</a>';
+        }
+
+        if ( 'google_map' == $type ) {
+            $value = '<a href="https://www.google.com/maps/?q=' . $value['lat'] . ',' . $value['lng'] . '" target="_blank">' . esc_html( $value['address'] ) . '</a>';
+        }
+
+        if ( 'user' == $type && ( 'object' == $format || 'array' == $format ) ) {
+            $output = [];
+
+            $value = $is_multiple ? $value : [ $value ];
+
+            foreach ( $value as $val ) {
+                if ( 'object' == $format ) {
+                    $output[] = $val->display_name;
+                }
+                elseif ( 'array' == $format ) {
+                    $output[] = $val['display_name'];
+                }
+            }
+            $value = $output;
         }
 
         return $value;
@@ -470,5 +537,5 @@ class FacetWP_Integration_ACF
 
 
 if ( function_exists( 'acf' ) ) {
-    new FacetWP_Integration_ACF();
+    FWP()->acf = new FacetWP_Integration_ACF();
 }

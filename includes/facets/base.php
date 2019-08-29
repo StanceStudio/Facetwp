@@ -25,6 +25,7 @@ class FacetWP_Facet
         elseif ('term_order' == $key && 'tax' == substr( $facet['source'], 0, 3 ) ) {
             $term_ids = get_terms( [
                 'taxonomy' => str_replace( 'tax/', '', $facet['source'] ),
+                'orderby' => 'term_order',
                 'fields' => 'ids',
             ] );
 
